@@ -1,0 +1,9 @@
+# Repo-wide safety net; per-directory .gitignore files cover build output and venvs.
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+infra/cdk.out/
+infra/cdk.context.json

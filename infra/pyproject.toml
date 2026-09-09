@@ -1,0 +1,12 @@
+[project]
+name = "sopkoll-infra"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "aws-cdk-lib>=2.261.0",
+    "boto3>=1.35",
+    "constructs>=10.7.0",
+]
+
+[tool.ruff]
+line-length = 100

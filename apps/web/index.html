@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="sv" class="h-full antialiased">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/icon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- viewport-fit=cover lets the sticky header extend under the iOS notch;
+         it re-adds the safe-area inset itself. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <!-- Matches --background so the status bar blends in standalone mode. -->
+    <meta name="theme-color" content="#f9f5ee" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="sopkoll" />
+    <meta
+      name="description"
+      content="Håll koll på när sopbilen kommer och få en notis när det är dags att ställa ut kärlet."
+    />
+    <title>sopkoll</title>
+  </head>
+  <body class="min-h-full flex flex-col">
+    <div id="root" class="flex min-h-screen flex-col"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

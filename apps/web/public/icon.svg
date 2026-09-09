@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Solid background: required for maskable icons, and iOS flattens
+       transparency to black otherwise. Dark kraft brown. -->
+  <rect width="512" height="512" fill="#3a2418" />
+  <!-- The bell: the one warm accent, where bike-my-day keeps its sun. -->
+  <circle cx="404" cy="108" r="40" fill="#fbbf24" />
+  <g stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <!-- Wheelie bin body: slightly tapered, the way the real kärl is. -->
+    <path d="M148 190 L164 400 L348 400 L364 190 Z" />
+    <!-- Lid, tipped open a little: the bin is about to go out. -->
+    <path d="M128 190 L384 190" />
+    <path d="M196 190 L214 134 L328 134 L346 190" />
+    <!-- Ribs. -->
+    <path d="M214 232 L222 358 M298 232 L290 358" />
+    <!-- Wheels. -->
+    <circle cx="186" cy="436" r="22" />
+    <circle cx="326" cy="436" r="22" />
+  </g>
+</svg>
