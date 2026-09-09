@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router";
 import { AddressField } from "@/components/address-field";
 import { BinIcon } from "@/components/bin-icon";
 import { Page } from "@/components/page";
+import { PushToggle } from "@/components/push-toggle";
 import { ReminderFields } from "@/components/reminder-fields";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -98,7 +99,7 @@ export function Welcome({ changeAddress = false }: { changeAddress?: boolean }) 
                   <Spinner /> {t.welcome.searching}
                 </>
               ) : (
-                t.welcome.save
+                t.welcome.fetch
               )}
             </Button>
             <Button asChild variant="ghost">
@@ -166,6 +167,11 @@ export function Welcome({ changeAddress = false }: { changeAddress?: boolean }) 
           <p className="mt-2 text-base text-muted-foreground">{t.welcome.reminderHelp}</p>
           <div className="mt-6">
             <ReminderFields settings={settings} onChange={(p) => store.setSettings(p)} />
+          </div>
+          <h2 className="mt-8 font-heading text-xl font-semibold">{t.welcome.pushTitle}</h2>
+          <p className="mt-1 text-sm text-muted-foreground">{t.welcome.pushHelp}</p>
+          <div className="mt-3">
+            <PushToggle />
           </div>
           <div className="mt-8">
             <Button size="lg" onClick={finish}>

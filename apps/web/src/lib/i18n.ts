@@ -59,6 +59,7 @@ export const t = {
       "Skriv din gatuadress och välj den i listan. Hämtdagarna kommer från Stockholm Vatten och Avfall.",
     addressLabel: "Adress",
     addressPlaceholder: "Nockebyvägen 15",
+    fetch: "Hämta kärl",
     searching: "Hämtar hämtdagar…",
     noSchedule:
       "Stockholm Vatten och Avfall har inga hämtdagar för den adressen — det gäller ofta lägenhetshus. Du kan lägga till kärl själv i stället.",
@@ -68,6 +69,8 @@ export const t = {
     save: "Spara kärlen",
     reminderTitle: "När vill du bli påmind?",
     reminderHelp: "Samma regel för alla kärl. Du ändrar den när som helst under Inställningar.",
+    pushTitle: "Notiser",
+    pushHelp: "Påminnelsen kommer som en notis till den här telefonen, även när appen är stängd.",
     done: "Klart",
     skip: "Hoppa över",
     manualInstead: "Lägg till ett kärl själv",
