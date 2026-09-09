@@ -99,7 +99,9 @@ class SopkollStack(Stack):
             removal_policy=cdk.RemovalPolicy.RETAIN,
             lifecycle_rules=[s3.LifecycleRule(prefix="db/", expiration=cdk.Duration.days(30))],
         )
-        role = iam.Role.from_role_name(self, "ServerRole", server["role_name"])
+        # Not "ServerRole": isabelle uses that id on the same role, and CDK names the inline
+        # policy after the construct path, so both stacks would fight over one policy.
+        role = iam.Role.from_role_name(self, "SopkollServerRole", server["role_name"])
         deploy_bucket.grant_read(role)
         backup_bucket.grant_read_write(role)
 

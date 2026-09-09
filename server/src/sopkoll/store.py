@@ -56,7 +56,10 @@ CREATE TABLE IF NOT EXISTS svoa_cache (
 
 
 def connect(path: str | None = None) -> sqlite3.Connection:
-    conn = sqlite3.connect(path or config.DB_PATH, isolation_level=None)
+    # FastAPI runs sync endpoints on a thread pool, so the app-wide connection is
+    # touched from many threads. Python's sqlite3 serialises access internally
+    # (SQLITE_THREADSAFE=1); we only need to switch off the same-thread guard.
+    conn = sqlite3.connect(path or config.DB_PATH, isolation_level=None, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
