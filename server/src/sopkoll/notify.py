@@ -105,6 +105,9 @@ def send(sub: dict, payload: dict, ttl: int = 6 * 3600) -> bool:
             return False
         log.warning("push failed (%s): %s", code, err)
         return True
+    except Exception:  # noqa: BLE001 - DNS/TLS/connection errors from the push service
+        log.exception("push raised")
+        return True
 
 
 def run_once(conn, now: datetime | None = None) -> int:
