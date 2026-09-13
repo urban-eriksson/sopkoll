@@ -183,8 +183,11 @@ prunes endpoints that return 404/410. SVOA items get `next_date` from the nightl
    with unit tests on the frequency parser. Dashboard works fully client-side from localStorage.
 3. **Items** — manual add/edit, welcome wizard, settings, localStorage persistence.
 4. **Push** — service worker, push toggle, VAPID, scheduler loop, nightly refresh, test button.
-5. **Ops** — CDK stacks, provision/deploy scripts, backup timer, README runbook, CI (lint,
-   typecheck, vitest, pytest).
-6. *Future:* camera classification ("which bin does this go in?") — client-side image → Claude
-   vision via the backend, mapping to the brochure's sorting examples.
+5. **Ops** — CDK stacks, provision/deploy scripts, backup timer, README runbook.
+
+Milestones 1–5 shipped 2026-09-09; first real reminder confirmed on iOS 2026-09-10.
+
+Decided 2026-09-13: no GitHub Actions CI (run the checks locally before committing). English
+copy is not needed — Stockholm house owners read basic Swedish. Camera-based sorting help
+("which bin does this go in?") waits for user demand.
 
