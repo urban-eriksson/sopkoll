@@ -27,8 +27,8 @@ def test_due_now_fires_once_and_folds(monkeypatch):
     (d,) = due.values()
     assert sorted(n for _, n, _ in d["items"]) == ["Glas och metall", "Papper och plast"]
     p = notify.payload_for(d["items"], d["today"])
-    assert p["title"] == "Ställ ut Papper och plast och Glas och metall"
-    assert p["body"] == "Hämtas imorgon."
+    assert p["title"] == "Ställ ut 2 kärl – hämtas imorgon"
+    assert p["body"] == "Glas och metall\nPapper och plast"
 
     sent = []
     monkeypatch.setattr(notify, "send", lambda sub, payload, ttl=0: sent.append(payload) or True)

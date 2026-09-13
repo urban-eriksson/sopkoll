@@ -75,16 +75,18 @@ def due_now(conn, now: datetime) -> dict[int, dict]:
 
 
 def payload_for(items: list[tuple], today) -> dict:
-    names = [name for _, name, _ in items]
+    """Short title, bins in the body. iOS truncates a long title in the banner, so
+    two bin names in the title showed as one (seen 2026-09-10); one name per body
+    line survives truncation and reads as a checklist."""
+    names = sorted(name for _, name, _ in items)
     pickup = min(p for _, _, p in items)
     when = describe(pickup, today)
     if len(names) == 1:
         title = f"Ställ ut {names[0]}"
-    elif len(names) == 2:
-        title = f"Ställ ut {names[0]} och {names[1]}"
+        body = f"Hämtas {when}."
     else:
-        title = f"Ställ ut {len(names)} kärl"
-    body = f"Hämtas {when}." if len(names) <= 2 else ", ".join(names) + f". Hämtas {when}."
+        title = f"Ställ ut {len(names)} kärl – hämtas {when}"
+        body = "\n".join(names)
     return {"title": title, "body": body, "url": "/app", "tag": f"pickup-{pickup.isoformat()}"}
 
 
