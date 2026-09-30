@@ -59,7 +59,7 @@ export const t = {
     addressHelp:
       "Skriv din gatuadress och välj den i listan. Hämtdagarna kommer från Stockholm Vatten och Avfall.",
     addressLabel: "Adress",
-    addressPlaceholder: "Nockebyvägen 15",
+    addressPlaceholder: "Exempelgatan 1",
     fetch: "Hämta kärl",
     searching: "Hämtar hämtdagar…",
     noSchedule:

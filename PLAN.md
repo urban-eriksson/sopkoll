@@ -12,10 +12,10 @@ JSON endpoints under the page URL. No API key, no cookie needed, no rate limitin
 ```
 BASE = https://www.stockholmvattenochavfall.se/villa-och-radhus/avfallstjanster/nar-kommer-sopbilen
 
-GET BASE/AutoCompleteMe?query=Nockebyv%C3%A4gen%201
-→ [{"value":"Nockebyvägen 15, Bromma, 167 71","data":"167 71"}, ...]   (max 5 hits)
+GET BASE/AutoCompleteMe?query=Exempelgatan%201
+→ [{"value":"Exempelgatan 1, Bromma, 167 00","data":"167 00"}, ...]   (max 5 hits)
 
-GET BASE/Search?address=Nockebyv%C3%A4gen%2015,%20Bromma,%20167%2071
+GET BASE/Search?address=Exempelgatan%201,%20Bromma,%20167%2000
 → [
     {"group":"Kärl 1 - restavfall och matavfall","fetchFrequency":"Varannan vecka",
      "executionDate":"2026-09-09","weekday":"Onsdag"},
@@ -27,6 +27,9 @@ GET BASE/Search?address=Nockebyv%C3%A4gen%2015,%20Bromma,%20167%2071
      "executionDate":"2026-09-21","weekday":"Måndag"}
   ]
 ```
+
+(The address is fictional; the response shape and values were verified against a real
+villa address, which is deliberately not recorded in this public repo.)
 
 - The `address` must be the exact `value` string from AutoCompleteMe (street + number,
   district, postcode). Anything else → `{"error":"Internal Server Error","message":"Invalid address format"}`.

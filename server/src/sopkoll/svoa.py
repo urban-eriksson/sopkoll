@@ -1,9 +1,9 @@
 """Stockholm Vatten och Avfall's "När kommer sopbilen?" endpoints.
 
 Two unauthenticated JSON calls under the public page URL (verified 2026-09-09):
-  GET {BASE}/AutoCompleteMe?query=Nockebyvägen 1
-    -> [{"value": "Nockebyvägen 15, Bromma, 167 71", "data": "167 71"}, ...]
-  GET {BASE}/Search?address=Nockebyvägen 15, Bromma, 167 71
+  GET {BASE}/AutoCompleteMe?query=Exempelgatan 1
+    -> [{"value": "Exempelgatan 1, Bromma, 167 00", "data": "167 00"}, ...]
+  GET {BASE}/Search?address=Exempelgatan 1, Bromma, 167 00
     -> [{"group": "Kärl 1 - restavfall och matavfall", "fetchFrequency": "Varannan vecka",
          "executionDate": "2026-09-09", "weekday": "Onsdag"}, ...]
 The address must be the exact autocomplete value; anything else answers

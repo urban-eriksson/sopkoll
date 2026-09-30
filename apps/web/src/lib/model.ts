@@ -40,7 +40,7 @@ export interface Item {
   name: string;
   type: BinType;
   source: "svoa" | "manual";
-  /** SVOA address value, e.g. "Nockebyvägen 15, Bromma, 167 71". */
+  /** SVOA address value, e.g. "Exempelgatan 1, Bromma, 167 00". */
   address?: string;
   /** SVOA group name, kept verbatim so a refresh can match it. */
   group?: string;
