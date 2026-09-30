@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { t } from "@/lib/i18n";
 import { store } from "@/lib/store";
+import { forgetDevice } from "@/lib/sync";
 
 /**
  * Shared top bar. Sticky with safe-area padding so it sits under the iOS
@@ -29,6 +30,23 @@ import { store } from "@/lib/store";
  */
 export function AppHeader({ back = false }: { back?: boolean }) {
   const [confirmWipe, setConfirmWipe] = useState(false);
+  const [wiping, setWiping] = useState(false);
+  const [wipeError, setWipeError] = useState<string | null>(null);
+
+  async function wipe() {
+    setWiping(true);
+    setWipeError(null);
+    try {
+      await forgetDevice();
+      store.wipe();
+      setConfirmWipe(false);
+      navigate("/");
+    } catch {
+      setWipeError(t.wipeDialog.failed);
+    } finally {
+      setWiping(false);
+    }
+  }
   const navigate = useNavigate();
 
   return (
@@ -85,16 +103,14 @@ export function AppHeader({ back = false }: { back?: boolean }) {
             <AlertDialogTitle>{t.wipeDialog.title}</AlertDialogTitle>
             <AlertDialogDescription>{t.wipeDialog.body}</AlertDialogDescription>
           </AlertDialogHeader>
+          {wipeError ? (
+            <p role="alert" className="text-sm text-destructive">
+              {wipeError}
+            </p>
+          ) : null}
           <AlertDialogFooter>
-            <AlertDialogCancel>{t.wipeDialog.cancel}</AlertDialogCancel>
-            <Button
-              variant="destructive"
-              onClick={() => {
-                store.wipe();
-                setConfirmWipe(false);
-                navigate("/");
-              }}
-            >
+            <AlertDialogCancel disabled={wiping}>{t.wipeDialog.cancel}</AlertDialogCancel>
+            <Button variant="destructive" disabled={wiping} onClick={wipe}>
               {t.wipeDialog.confirm}
             </Button>
           </AlertDialogFooter>

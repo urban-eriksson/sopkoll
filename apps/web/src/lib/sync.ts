@@ -10,6 +10,7 @@ import { store } from "./store";
  */
 
 const PUSH_KEY = "sopkoll:push";
+const REFRESH_KEY = "sopkoll:refreshed";
 
 export interface PushKeys {
   endpoint: string;
@@ -51,11 +52,40 @@ export async function pushDevice(sub: PushKeys): Promise<void> {
 }
 
 export async function deleteDevice(endpoint: string): Promise<void> {
-  await fetch("/api/devices", {
+  const res = await fetch("/api/devices", {
     method: "DELETE",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({ endpoint }),
   });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+}
+
+/**
+ * Remove this device from the server and turn push off. The remembered
+ * subscription is dropped *first*, so the debounced mirror in startSync cannot
+ * re-create the device between the delete and the store change that follows.
+ * If the server cannot be reached, the subscription is restored and the error
+ * surfaces — the user must never believe data is gone when it is not.
+ */
+export async function forgetDevice(): Promise<void> {
+  const sub = savedSubscription();
+  rememberSubscription(null);
+  const registration =
+    "serviceWorker" in navigator ? await navigator.serviceWorker.getRegistration() : undefined;
+  const live = await registration?.pushManager.getSubscription();
+  const endpoint = sub?.endpoint ?? live?.endpoint;
+  try {
+    if (endpoint) await deleteDevice(endpoint);
+  } catch (err) {
+    if (sub) rememberSubscription(sub);
+    throw err;
+  }
+  await live?.unsubscribe();
+  try {
+    localStorage.removeItem(REFRESH_KEY);
+  } catch {
+    // ignore
+  }
 }
 
 export async function sendTest(endpoint: string): Promise<void> {
@@ -95,7 +125,6 @@ export function startSync() {
   });
 }
 
-const REFRESH_KEY = "sopkoll:refreshed";
 const REFRESH_MAX_AGE_MS = 6 * 3600 * 1000;
 
 /**

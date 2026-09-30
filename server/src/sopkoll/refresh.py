@@ -10,12 +10,14 @@ from __future__ import annotations
 import asyncio
 import logging
 import sys
+from datetime import UTC, datetime, timedelta
 
 import httpx
 
 from sopkoll import store, svoa
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+logging.getLogger("httpx").setLevel(logging.WARNING)  # request URLs carry addresses
 log = logging.getLogger("sopkoll.refresh")
 
 
@@ -30,8 +32,9 @@ async def main() -> int:
                 updated += store.update_svoa_next_dates(conn, address, pickups)
             except Exception as err:  # noqa: BLE001
                 failed += 1
-                log.warning("refresh failed for %r: %s", address, err)
+                log.warning("refresh failed for one address: %s", type(err).__name__)
             await asyncio.sleep(0.5)  # be a polite guest
+    store.prune_cache(conn, datetime.now(UTC) - timedelta(hours=24))
     log.info("refreshed %d address(es): %d item(s) updated, %d failed", len(addresses), updated, failed)
     return 0 if failed == 0 else 1
 

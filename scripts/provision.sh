@@ -65,7 +65,7 @@ User=sopkoll
 WorkingDirectory=/opt/sopkoll/app
 EnvironmentFile=/etc/sopkoll/env
 EnvironmentFile=/etc/sopkoll/settings
-ExecStart=/usr/local/bin/uv run --frozen --no-dev uvicorn sopkoll.main:app --host 127.0.0.1 --port 8002 --proxy-headers
+ExecStart=/usr/local/bin/uv run --frozen --no-dev uvicorn sopkoll.main:app --host 127.0.0.1 --port 8002 --proxy-headers --no-access-log
 Restart=always
 RestartSec=3
 

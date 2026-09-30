@@ -34,3 +34,30 @@ def test_validation(client):
     bad = {"subscription": SUB, "settings": {"daysBefore": 9, "timeOfDay": "19:00"}, "items": []}
     assert client.put("/api/devices", json=bad).status_code == 422
     assert client.get("/api/address/suggest?q=ab").status_code == 422
+
+
+def test_delete_removes_everything_about_the_device(client):
+    """What the Facebook post promises: 'Stäng av notiser' leaves nothing behind."""
+    body = {
+        "subscription": SUB,
+        "settings": {"daysBefore": 1, "timeOfDay": "19:00", "address": "Gatan 1, Bromma, 167 71"},
+        "items": [ITEM],
+    }
+    client.put("/api/devices", json=body)
+    db = main.app.state.db
+    device_id = db.execute("SELECT id FROM devices").fetchone()[0]
+    store.mark_sent(db, device_id, "i1", "2026-09-21")
+    client.request("DELETE", "/api/devices", json={"endpoint": SUB["endpoint"]})
+    for table in ("devices", "items", "notifications"):
+        assert db.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0] == 0, table
+
+
+def test_lookup_cache_is_pruned():
+    from datetime import UTC, datetime, timedelta
+
+    conn = store.connect(":memory:")
+    store.cache_put(conn, "Gatan 1, Bromma, 167 71", [])
+    conn.execute("UPDATE svoa_cache SET fetched_at = ?", ((datetime.now(UTC) - timedelta(hours=25)).isoformat(timespec="seconds"),))
+    store.cache_put(conn, "Gatan 2, Bromma, 167 71", [])
+    store.prune_cache(conn, datetime.now(UTC) - timedelta(hours=24))
+    assert [r[0] for r in conn.execute("SELECT address FROM svoa_cache")] == ["Gatan 2, Bromma, 167 71"]

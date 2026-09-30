@@ -192,6 +192,13 @@ def update_svoa_next_dates(conn, address: str, pickups: list[dict]) -> int:
     return n
 
 
+def prune_cache(conn, older_than: datetime) -> None:
+    conn.execute(
+        "DELETE FROM svoa_cache WHERE fetched_at < ?",
+        (older_than.astimezone(UTC).isoformat(timespec="seconds"),),
+    )
+
+
 def cache_get(conn, address: str):
     return conn.execute("SELECT * FROM svoa_cache WHERE address = ?", (address,)).fetchone()
 

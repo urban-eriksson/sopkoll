@@ -19,7 +19,8 @@ export const t = {
   },
   wipeDialog: {
     title: "Rensa alla data?",
-    body: "Kärl, adress och inställningar tas bort från den här telefonen. Det går inte att ångra.",
+    body: "Kärl, adress och inställningar tas bort från telefonen och från servern, och notiserna stängs av. Det går inte att ångra.",
+    failed: "Kunde inte nå servern, så inget har raderats. Försök igen när du har nät.",
     cancel: "Avbryt",
     confirm: "Rensa",
   },

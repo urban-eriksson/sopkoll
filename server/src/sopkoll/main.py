@@ -21,6 +21,10 @@ from pydantic import BaseModel, Field, field_validator
 from sopkoll import config, notify, store, svoa
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(name)s: %(message)s")
+# httpx logs every request URL at INFO, and SVOA URLs carry the searched address.
+# Together with uvicorn's --no-access-log (provision.sh) this keeps addresses and
+# IP numbers out of the journal.
+logging.getLogger("httpx").setLevel(logging.WARNING)
 log = logging.getLogger("sopkoll")
 
 
@@ -111,7 +115,7 @@ async def suggest(q: str = Query(min_length=3, max_length=100)) -> list[dict]:
     try:
         return await svoa.suggest(app.state.http, q)
     except (httpx.HTTPError, svoa.SvoaError) as err:
-        log.warning("svoa suggest failed: %s", err)
+        log.warning("svoa suggest failed: %s", type(err).__name__)
         raise HTTPException(502, "Stockholm Vatten och Avfall svarar inte just nu") from err
 
 
@@ -122,7 +126,7 @@ async def schedule(address: str = Query(min_length=5, max_length=200)) -> list[d
     except svoa.SvoaError as err:
         raise HTTPException(400, str(err)) from err
     except httpx.HTTPError as err:
-        log.warning("svoa search failed: %s", err)
+        log.warning("svoa search failed: %s", type(err).__name__)
         raise HTTPException(502, "Stockholm Vatten och Avfall svarar inte just nu") from err
 
 

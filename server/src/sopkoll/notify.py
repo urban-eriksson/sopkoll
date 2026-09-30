@@ -131,6 +131,8 @@ def run_once(conn, now: datetime | None = None) -> int:
         store.delete_devices(conn, dead)
         log.info("dropped %d dead device(s)", len(dead))
     store.prune_notifications(conn, (now - timedelta(days=60)).date().isoformat())
+    # Lookups are cached for SVOA_CACHE_HOURS; nothing needs them after a day.
+    store.prune_cache(conn, now - timedelta(hours=24))
     if sent:
         log.info("sent %d reminder(s)", sent)
     return sent

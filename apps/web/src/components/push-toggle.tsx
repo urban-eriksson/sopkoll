@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { t } from "@/lib/i18n";
 import {
-  deleteDevice,
   fetchVapidKey,
+  forgetDevice,
   pushDevice,
   rememberSubscription,
   sendTest,
@@ -100,16 +100,14 @@ export function PushToggle() {
     setState({ phase: "working" });
     setMessage(null);
     try {
-      const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
-      if (subscription) {
-        await subscription.unsubscribe();
-        await deleteDevice(subscription.endpoint);
-      }
-      rememberSubscription(null);
+      await forgetDevice();
       setState({ phase: "idle" });
     } catch (err) {
-      setState({ phase: "idle" });
+      const registration = await navigator.serviceWorker.ready;
+      const subscription = await registration.pushManager.getSubscription();
+      setState(
+        subscription ? { phase: "subscribed", endpoint: subscription.endpoint } : { phase: "idle" },
+      );
       setMessage({
         text: t.push.failed(err instanceof Error ? err.message : String(err)),
         isError: true,
