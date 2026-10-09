@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { AddressField } from "@/components/address-field";
 import { BinIcon } from "@/components/bin-icon";
+import { detectPlatform } from "@/components/home-actions";
 import { Page } from "@/components/page";
 import { PushToggle } from "@/components/push-toggle";
 import { ReminderFields } from "@/components/reminder-fields";
@@ -20,16 +21,17 @@ type Step =
   | { n: 2; address: string; candidates: Item[]; chosen: Set<string> }
   | { n: 3 };
 
-const TOTAL = 3;
-
 /**
  * First run: address → which bins → reminder rule. Every step is skippable and
  * the manual escape hatch is always one tap away, because SVOA has nothing for
- * apartment buildings and those households still have bins to remember.
+ * apartment buildings and those households still have bins to remember. The
+ * reminder step only exists in the installed app, the only place push reaches.
  */
 export function Welcome({ changeAddress = false }: { changeAddress?: boolean }) {
   const navigate = useNavigate();
   const { settings, items } = useStore();
+  const [installed] = useState(() => detectPlatform() === "standalone");
+  const total = installed ? 3 : 2;
   const [step, setStep] = useState<Step>({
     n: 1,
     address: changeAddress ? null : (settings.address ?? null),
@@ -58,7 +60,8 @@ export function Welcome({ changeAddress = false }: { changeAddress?: boolean }) 
       s.candidates.filter((c) => s.chosen.has(c.id)),
     );
     if (changeAddress) navigate("/app");
-    else setStep({ n: 3 });
+    else if (installed) setStep({ n: 3 });
+    else finish();
   }
 
   function finish() {
@@ -68,7 +71,7 @@ export function Welcome({ changeAddress = false }: { changeAddress?: boolean }) 
 
   return (
     <Page back={changeAddress}>
-      <p className="text-sm font-medium text-muted-foreground">{t.welcome.step(step.n, TOTAL)}</p>
+      <p className="text-sm font-medium text-muted-foreground">{t.welcome.step(step.n, total)}</p>
 
       {step.n === 1 ? (
         <section className="mt-2">

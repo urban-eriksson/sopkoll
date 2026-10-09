@@ -1,6 +1,8 @@
 import { MapPin, Plus } from "lucide-react";
+import { useState } from "react";
 import { Link, Navigate } from "react-router";
 import { BinIcon } from "@/components/bin-icon";
+import { detectPlatform } from "@/components/home-actions";
 import { Page } from "@/components/page";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -20,6 +22,8 @@ const timeFmt = new Intl.DateTimeFormat("sv-SE", {
 export function Dashboard() {
   const { items, settings, onboarded } = useStore();
   const today = useToday();
+  // Push only reaches the installed app, so a browser tab has no reminder to announce.
+  const [installed] = useState(() => detectPlatform() === "standalone");
 
   if (!onboarded && items.length === 0) return <Navigate to="/welcome" replace />;
 
@@ -74,7 +78,7 @@ export function Dashboard() {
               </li>
             ))}
           </ul>
-          {reminderAt(soonest, settings) > today ? (
+          {installed && reminderAt(soonest, settings) > today ? (
             <p className="mt-4 text-xs opacity-70">
               {t.dashboard.reminder(timeFmt.format(reminderAt(soonest, settings)))}
             </p>
