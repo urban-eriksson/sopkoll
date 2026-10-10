@@ -60,7 +60,7 @@ scripts/deploy-web.sh
 Ops on the box (`aws ssm start-session --target <instance>`):
 `systemctl status sopkoll sopkoll-refresh.timer sopkoll-backup.timer`,
 `journalctl -u sopkoll -f`, `journalctl -u sopkoll-refresh`. Nightly `.backup`
-of the DB goes to the Sopkoll BackupBucket (30-day expiry).
+of the DB goes to the Sopkoll BackupBucket (7-day expiry).
 
 ## Timers on the box
 

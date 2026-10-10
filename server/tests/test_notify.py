@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 from sopkoll import notify, store
 
 TZ = ZoneInfo("Europe/Stockholm")
-SUB = {"endpoint": "https://push.example/abc", "keys": {"p256dh": "p", "auth": "a"}}
+SUB = {"endpoint": "https://fcm.googleapis.com/fcm/send/abc", "keys": {"p256dh": "p", "auth": "a"}}
 SETTINGS = {"daysBefore": 1, "timeOfDay": "19:00", "address": None}
 
 

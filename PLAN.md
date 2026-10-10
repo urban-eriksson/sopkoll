@@ -139,7 +139,7 @@ items[]    { id, name, type: rest|mat|papper|plast|glas|metall|tradgard|other,
 Server (SQLite, only devices that enabled push):
 
 ```
-devices        id, endpoint (unique), p256dh, auth, user_agent, days_before, time_of_day,
+devices        id, endpoint (unique), p256dh, auth, days_before, time_of_day,
                address_value, created_at, last_seen_at, last_ok_at
 items          id, device_id, name, type, source, address_value, group_name, frequency_text,
                interval_days, season_months, next_date, enabled
@@ -153,6 +153,11 @@ Every 5 min the scheduler selects due `(device, item, next_date)` triples with n
 måndag 21 sep."), records it, advances `next_date` by `interval_days` for manual items, and
 prunes endpoints that return 404/410. SVOA items get `next_date` from the nightly refresh
 (fallback: advance by `interval_days` if SVOA is unreachable).
+
+Abuse limits (added 2026-10-10, before the public launch): subscription endpoints must be on a
+browser push service (FCM, Apple, Mozilla, WNS); a *new* device is only stored once its push
+service accepts a welcome notification; at most 2000 devices; devices with no bins that have
+not synced for 30 days are dropped. The user agent is no longer stored.
 
 ## Screens
 
@@ -169,7 +174,7 @@ prunes endpoints that return 404/410. SVOA items get `next_date` from the nightl
 
 - `SopkollCert` (us-east-1 ACM, DNS-validated) + `Sopkoll` (eu-north-1): private S3 site bucket +
   CloudFront (OAC, `/api/*` → `api.sopkoll.korist.se`, caching disabled), deploy bucket, backup
-  bucket (30-day expiry, RETAIN), Route 53 `sopkoll` A-alias and `api.sopkoll` A → EIP, grants
+  bucket (7-day expiry, RETAIN), Route 53 `sopkoll` A-alias and `api.sopkoll` A → EIP, grants
   on the existing instance role. Instance id/EIP/role resolved from the `Snicksnack` stack outputs.
 - `scripts/provision.sh` (idempotent, root, run on every server deploy): `sopkoll` user, dirs,
   VAPID keys + JWT secret once into `/etc/sopkoll/env`, `/etc/sopkoll/settings`, Caddy block

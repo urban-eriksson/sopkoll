@@ -12,6 +12,7 @@ import asyncio
 import logging
 import re
 from contextlib import asynccontextmanager
+from urllib.parse import urlsplit
 
 import httpx
 from fastapi import FastAPI, HTTPException, Query
@@ -41,7 +42,8 @@ async def lifespan(app: FastAPI):
         app.state.db.close()
 
 
-app = FastAPI(title="sopkoll", lifespan=lifespan)
+# No /docs or /openapi.json: the only client is our own app.
+app = FastAPI(title="sopkoll", lifespan=lifespan, docs_url=None, redoc_url=None, openapi_url=None)
 if config.CORS_ORIGINS:
     app.add_middleware(
         CORSMiddleware, allow_origins=config.CORS_ORIGINS, allow_methods=["*"], allow_headers=["*"]
@@ -59,6 +61,14 @@ class Keys(BaseModel):
 class Subscription(BaseModel):
     endpoint: str = Field(max_length=2000, pattern=r"^https://")
     keys: Keys
+
+    @field_validator("endpoint")
+    @classmethod
+    def push_service(cls, v):
+        host = urlsplit(v).hostname or ""
+        if not any(host == s.lstrip(".") or host.endswith(s) for s in config.PUSH_HOST_SUFFIXES):
+            raise ValueError("not a known push service")
+        return v
 
 
 class Settings(BaseModel):
@@ -90,7 +100,6 @@ class Item(BaseModel):
 
 class DeviceIn(BaseModel):
     subscription: Subscription
-    userAgent: str = Field(default="", max_length=300)
     timezone: str = Field(default=config.TIMEZONE, max_length=64)
     settings: Settings
     items: list[Item] = Field(default_factory=list, max_length=config.MAX_ITEMS_PER_DEVICE)
@@ -135,14 +144,19 @@ def put_device(body: DeviceIn) -> dict[str, int]:
     conn = app.state.db
     if not config.VAPID_PRIVATE:
         raise HTTPException(503, "push is not configured")
-    if store.get_device(conn, body.subscription.endpoint) is None:
+    sub = body.subscription.model_dump()
+    if store.get_device(conn, sub["endpoint"]) is None:
         if store.count_devices(conn) >= config.MAX_DEVICES:
             raise HTTPException(503, "sopkoll är fullt just nu")
+        # A made-up endpoint costs nothing to send, so a new device must prove its
+        # subscription is real: the push service has to accept a welcome notice.
+        if not notify.send(sub, notify.WELCOME, ttl=3600, dead=notify.REJECTED):
+            raise HTTPException(400, "notistjänsten godkände inte prenumerationen")
     store.upsert_device(
         conn,
-        body.subscription.model_dump(),
+        sub,
         body.settings.model_dump(),
-        {"userAgent": body.userAgent, "timezone": body.timezone},
+        {"timezone": body.timezone},
         [i.model_dump() for i in body.items],
     )
     return {"items": len(body.items)}

@@ -90,7 +90,19 @@ def payload_for(items: list[tuple], today) -> dict:
     return {"title": title, "body": body, "url": "/app", "tag": f"pickup-{pickup.isoformat()}"}
 
 
-def send(sub: dict, payload: dict, ttl: int = 6 * 3600) -> bool:
+# Push-service answers meaning "this subscription is gone". On registration any
+# client error counts: a forged or mistyped subscription never becomes a device.
+DEAD = (404, 410)
+REJECTED = (400, 401, 403, 404, 410)
+WELCOME = {
+    "title": "sopkoll",
+    "body": "Notiserna är på. Du får en påminnelse när det är dags att ställa ut kärlen.",
+    "url": "/app",
+    "tag": "welcome",
+}
+
+
+def send(sub: dict, payload: dict, ttl: int = 6 * 3600, dead: tuple = DEAD) -> bool:
     """True if delivered or transiently failed; False if the subscription is dead."""
     try:
         webpush(
@@ -103,11 +115,11 @@ def send(sub: dict, payload: dict, ttl: int = 6 * 3600) -> bool:
         return True
     except WebPushException as err:
         code = err.response.status_code if err.response is not None else None
-        if code in (404, 410):
+        if code in dead:
             return False
         log.warning("push failed (%s): %s", code, err)
         return True
-    except Exception:  # noqa: BLE001 - DNS/TLS/connection errors from the push service
+    except Exception:
         log.exception("push raised")
         return True
 
@@ -131,6 +143,7 @@ def run_once(conn, now: datetime | None = None) -> int:
         store.delete_devices(conn, dead)
         log.info("dropped %d dead device(s)", len(dead))
     store.prune_notifications(conn, (now - timedelta(days=60)).date().isoformat())
+    store.prune_empty_devices(conn, now - timedelta(days=config.EMPTY_DEVICE_DAYS))
     # Lookups are cached for SVOA_CACHE_HOURS; nothing needs them after a day.
     store.prune_cache(conn, now - timedelta(hours=24))
     if sent:

@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS devices (
     endpoint      TEXT NOT NULL UNIQUE,
     p256dh        TEXT NOT NULL,
     auth          TEXT NOT NULL,
-    user_agent    TEXT NOT NULL DEFAULT '',
     timezone      TEXT NOT NULL DEFAULT 'Europe/Stockholm',
     days_before   INTEGER NOT NULL DEFAULT 1,
     time_of_day   TEXT NOT NULL DEFAULT '19:00',
@@ -64,6 +63,17 @@ def connect(path: str | None = None) -> sqlite3.Connection:
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     conn.executescript(SCHEMA)
+    # The browser's user agent used to be stored and was never used. Not a
+    # migration system, just dropping what we promised not to keep.
+    if any(r[1] == "user_agent" for r in conn.execute("PRAGMA table_info(devices)")):
+        try:
+            conn.execute("ALTER TABLE devices DROP COLUMN user_agent")
+            changed = True
+        except sqlite3.OperationalError:  # SQLite < 3.35: keep the column, empty it
+            sql = "UPDATE devices SET user_agent = '' WHERE user_agent != ''"
+            changed = conn.execute(sql).rowcount > 0
+        if changed:
+            conn.execute("VACUUM")  # so the old values do not linger in free pages
     return conn
 
 
@@ -90,17 +100,17 @@ def upsert_device(conn, sub: dict, settings: dict, meta: dict, items: list[dict]
     now = now_iso()
     with tx(conn):
         conn.execute(
-            """INSERT INTO devices (endpoint, p256dh, auth, user_agent, timezone, days_before,
+            """INSERT INTO devices (endpoint, p256dh, auth, timezone, days_before,
                                     time_of_day, address, created_at, last_seen_at)
-               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
                ON CONFLICT(endpoint) DO UPDATE SET
-                 p256dh=excluded.p256dh, auth=excluded.auth, user_agent=excluded.user_agent,
+                 p256dh=excluded.p256dh, auth=excluded.auth,
                  timezone=excluded.timezone, days_before=excluded.days_before,
                  time_of_day=excluded.time_of_day, address=excluded.address,
                  last_seen_at=excluded.last_seen_at""",
             (
                 sub["endpoint"], sub["keys"]["p256dh"], sub["keys"]["auth"],
-                meta.get("userAgent", "")[:300], meta.get("timezone") or config.TIMEZONE,
+                meta.get("timezone") or config.TIMEZONE,
                 settings["daysBefore"], settings["timeOfDay"], settings.get("address"),
                 now, now,
             ),
@@ -190,6 +200,14 @@ def update_svoa_next_dates(conn, address: str, pickups: list[dict]) -> int:
             )
             n += cur.rowcount
     return n
+
+
+def prune_empty_devices(conn, not_seen_since: datetime) -> None:
+    conn.execute(
+        """DELETE FROM devices WHERE last_seen_at < ?
+             AND NOT EXISTS (SELECT 1 FROM items WHERE items.device_id = devices.id)""",
+        (not_seen_since.astimezone(UTC).isoformat(timespec="seconds"),),
+    )
 
 
 def prune_cache(conn, older_than: datetime) -> None:

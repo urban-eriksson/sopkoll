@@ -97,7 +97,9 @@ class SopkollStack(Stack):
             block_public_access=s3.BlockPublicAccess.BLOCK_ALL,
             encryption=s3.BucketEncryption.S3_MANAGED,
             removal_policy=cdk.RemovalPolicy.RETAIN,
-            lifecycle_rules=[s3.LifecycleRule(prefix="db/", expiration=cdk.Duration.days(30))],
+            # A week: long enough to recover from a bad deploy, short enough that
+            # "Rensa alla data" is honoured in the backups too within days.
+            lifecycle_rules=[s3.LifecycleRule(prefix="db/", expiration=cdk.Duration.days(7))],
         )
         # Not "ServerRole": isabelle uses that id on the same role, and CDK names the inline
         # policy after the construct path, so both stacks would fight over one policy.
@@ -130,6 +132,7 @@ class SopkollStack(Stack):
             cache_policy=cloudfront.CachePolicy.CACHING_DISABLED,
             origin_request_policy=cloudfront.OriginRequestPolicy.ALL_VIEWER_EXCEPT_HOST_HEADER,
             viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+            response_headers_policy=cloudfront.ResponseHeadersPolicy.SECURITY_HEADERS,
         )
         distribution = cloudfront.Distribution(
             self,
@@ -141,6 +144,8 @@ class SopkollStack(Stack):
                 origin=origins.S3BucketOrigin.with_origin_access_control(web_bucket),
                 viewer_protocol_policy=cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                 cache_policy=cloudfront.CachePolicy.CACHING_OPTIMIZED,
+                # HSTS, nosniff, frame-options, referrer-policy (AWS managed).
+                response_headers_policy=cloudfront.ResponseHeadersPolicy.SECURITY_HEADERS,
             ),
             additional_behaviors={"/api/*": api_behavior},
             price_class=cloudfront.PriceClass.PRICE_CLASS_100,

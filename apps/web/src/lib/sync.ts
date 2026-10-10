@@ -42,7 +42,6 @@ export async function pushDevice(sub: PushKeys): Promise<void> {
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       subscription: sub,
-      userAgent: navigator.userAgent,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       settings,
       items,
