@@ -30,6 +30,8 @@ from aws_cdk import (
 )
 from constructs import Construct
 
+from prod_box import ProdBoxStack
+
 ACCOUNT = os.environ.get("CDK_DEFAULT_ACCOUNT")
 if not ACCOUNT:
     raise SystemExit("No AWS account: run through the `cdk` CLI with credentials available.")
@@ -188,6 +190,7 @@ class SopkollStack(Stack):
 
 
 app = cdk.App()
+ProdBoxStack(app, "KoristProd", env=cdk.Environment(account=ACCOUNT, region=REGION))
 cert_stack = CertStack(
     app,
     "SopkollCert",
