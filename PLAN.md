@@ -46,6 +46,11 @@ villa address, which is deliberately not recorded in this public repo.)
 
 ## Verified facts about the shared EC2 box (the snicksnack t3.micro, eu-north-1c)
 
+> **Moved 2026-10-17.** Sopkoll now runs on its own production box, the `KoristProd` stack
+> (`infra/prod_box.py`, t3.micro, eu-north-1c), with the database and VAPID keys carried over
+> unchanged. The snicksnack box below became the dev box. Its old sopkoll install is stopped and
+> disabled, kept for a few days as a fallback.
+
 Measured over SSM on 2026-09-09:
 
 | Resource | Total | In use | Free |
@@ -175,7 +180,7 @@ not synced for 30 days are dropped. The user agent is no longer stored.
 - `SopkollCert` (us-east-1 ACM, DNS-validated) + `Sopkoll` (eu-north-1): private S3 site bucket +
   CloudFront (OAC, `/api/*` → `api.sopkoll.korist.se`, caching disabled), deploy bucket, backup
   bucket (7-day expiry, RETAIN), Route 53 `sopkoll` A-alias and `api.sopkoll` A → EIP, grants
-  on the existing instance role. Instance id/EIP/role resolved from the `Snicksnack` stack outputs.
+  on the existing instance role. Instance id/EIP/role resolved from the server stack's outputs (`KoristProd` since 2026-10-17).
 - `scripts/provision.sh` (idempotent, root, run on every server deploy): `sopkoll` user, dirs,
   VAPID keys + JWT secret once into `/etc/sopkoll/env`, `/etc/sopkoll/settings`, Caddy block
   `api.sopkoll.korist.se { reverse_proxy 127.0.0.1:8002 }` appended only if absent + validated

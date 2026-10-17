@@ -3,10 +3,10 @@
 Two stacks, mirroring snicksnack:
 - SopkollCert (us-east-1): the CloudFront certificate.
 - Sopkoll (eu-north-1): S3 + CloudFront for the static app at sopkoll.korist.se
-  with /api/* proxied to api.sopkoll.korist.se, which is the *existing*
-  snicksnack EC2 box (Caddy in front of a third uvicorn on port 8002).
+  with /api/* proxied to api.sopkoll.korist.se, the KoristProd box (Caddy in
+  front of uvicorn on port 8002). Until 2026-10-17 this was the snicksnack box.
 
-The box itself belongs to the Snicksnack stack. This stack only adds DNS for
+The box itself belongs to the KoristProd stack (prod_box.py). This stack only adds DNS for
 it, a deploy bucket its instance role may read, and reads the instance id,
 Elastic IP and role name from the Snicksnack stack at synth time.
 """
@@ -40,7 +40,7 @@ REGION = "eu-north-1"
 ZONE_NAME = "korist.se"
 DOMAIN = "sopkoll.korist.se"
 API_DOMAIN = "api.sopkoll.korist.se"
-SERVER_STACK = "Snicksnack"
+SERVER_STACK = "KoristProd"
 
 
 def server_facts() -> dict[str, str]:
@@ -103,8 +103,8 @@ class SopkollStack(Stack):
             # "Rensa alla data" is honoured in the backups too within days.
             lifecycle_rules=[s3.LifecycleRule(prefix="db/", expiration=cdk.Duration.days(7))],
         )
-        # Not "ServerRole": isabelle uses that id on the same role, and CDK names the inline
-        # policy after the construct path, so both stacks would fight over one policy.
+        # Not "ServerRole": several stacks grant on one box role, and CDK names the inline
+        # policy after the construct path, so they would fight over one policy.
         role = iam.Role.from_role_name(self, "SopkollServerRole", server["role_name"])
         deploy_bucket.grant_read(role)
         backup_bucket.grant_read_write(role)

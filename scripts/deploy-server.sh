@@ -10,7 +10,8 @@ out() {
 }
 BUCKET=$(out OutDeployBucket)
 BACKUP_BUCKET=$(out OutBackupBucket)
-INSTANCE=$(out OutInstanceId)
+# SOPKOLL_INSTANCE targets another box, e.g. a new one before DNS moves to it.
+INSTANCE=${SOPKOLL_INSTANCE:-$(out OutInstanceId)}
 API_DOMAIN=api.sopkoll.korist.se
 WEB_DOMAIN=sopkoll.korist.se
 

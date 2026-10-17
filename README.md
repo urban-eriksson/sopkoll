@@ -42,9 +42,11 @@ Without them the API still serves the SVOA proxy; the push toggle reports
 
 ## Deploy
 
-The backend is a tenant on the shared korist.se EC2 box (with snicksnack, isabelle
-and bike-my-day): uvicorn on `127.0.0.1:8002` behind the shared Caddy, DB at
-`/var/lib/sopkoll/sopkoll.db`, config in `/etc/sopkoll/{env,settings}`.
+The backend runs on the KoristProd box, the production EC2 for korist.se apps with real
+users (`infra/prod_box.py`; snicksnack, isabelle and friends live on the dev box):
+uvicorn on `127.0.0.1:8002` behind Caddy, DB at `/var/lib/sopkoll/sopkoll.db`, config in
+`/etc/sopkoll/{env,settings}`. The VAPID keys in `env` must move with the app if it ever
+changes box: new keys silently end every phone's subscription.
 
 ```bash
 # 1. Once: certificate (us-east-1) + S3/CloudFront/DNS/buckets (eu-north-1). Builds and uploads the web app.
