@@ -47,7 +47,7 @@ villa address, which is deliberately not recorded in this public repo.)
 ## Verified facts about the shared EC2 box (the snicksnack t3.micro, eu-north-1c)
 
 > **Moved 2026-10-17.** Sopkoll now runs on its own production box, the `KoristProd` stack
-> (`infra/prod_box.py`, t3.micro, eu-north-1c), with the database and VAPID keys carried over
+> (`korist-infra` repo, `infra/prod_box.py`, t3.micro, eu-north-1c), with the database and VAPID keys carried over
 > unchanged. The snicksnack box below became the dev box. Its old sopkoll install is stopped and
 > disabled, kept for a few days as a fallback.
 

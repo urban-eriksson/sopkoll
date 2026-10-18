@@ -6,7 +6,7 @@ Two stacks, mirroring snicksnack:
   with /api/* proxied to api.sopkoll.korist.se, the KoristProd box (Caddy in
   front of uvicorn on port 8002). Until 2026-10-17 this was the snicksnack box.
 
-The box itself belongs to the KoristProd stack (prod_box.py). This stack only adds DNS for
+The box itself belongs to the KoristProd stack (repo korist-infra). This stack only adds DNS for
 it, a deploy bucket its instance role may read, and reads the instance id,
 Elastic IP and role name from the Snicksnack stack at synth time.
 """
@@ -29,8 +29,6 @@ from aws_cdk import (
     aws_s3_deployment as s3deploy,
 )
 from constructs import Construct
-
-from prod_box import ProdBoxStack
 
 ACCOUNT = os.environ.get("CDK_DEFAULT_ACCOUNT")
 if not ACCOUNT:
@@ -190,7 +188,6 @@ class SopkollStack(Stack):
 
 
 app = cdk.App()
-ProdBoxStack(app, "KoristProd", env=cdk.Environment(account=ACCOUNT, region=REGION))
 cert_stack = CertStack(
     app,
     "SopkollCert",
