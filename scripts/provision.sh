@@ -1,7 +1,7 @@
 #!/bin/bash
-# Sets up the Sopkoll reminder service on the shared snicksnack box. Runs as
-# root through deploy-server.sh on every deploy and is idempotent: it never
-# touches the snicksnack units, and only appends its own Caddy site block.
+# Sets up the Sopkoll reminder service on the KoristProd box. Runs as root
+# through deploy-server.sh on every deploy and is idempotent: it never touches
+# other apps' units, and only appends its own Caddy site block.
 # Arguments: API_DOMAIN WEB_DOMAIN BACKUP_BUCKET
 set -euo pipefail
 API_DOMAIN=$1

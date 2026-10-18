@@ -9,8 +9,8 @@ export default defineConfig({
     alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
   },
   server: {
-    // REST API -> FastAPI dev server (server/, port 8002 to stay clear of the
-    // other tenants on the shared box: snicksnack 8000, isabelle 8001).
+    // REST API -> FastAPI dev server (server/, port 8002 as on the box; the
+    // korist-infra port map keeps 8000 and 8001 for snicksnack and isabelle).
     proxy: { "/api": { target: "http://localhost:8002" } },
   },
 });

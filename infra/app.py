@@ -8,7 +8,7 @@ Two stacks, mirroring snicksnack:
 
 The box itself belongs to the KoristProd stack (repo korist-infra). This stack only adds DNS for
 it, a deploy bucket its instance role may read, and reads the instance id,
-Elastic IP and role name from the Snicksnack stack at synth time.
+Elastic IP and role name from the KoristProd stack at synth time.
 """
 
 # pyright: reportArgumentType=false
