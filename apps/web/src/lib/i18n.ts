@@ -14,6 +14,7 @@ export const t = {
     back: "Tillbaka",
     home: "Dina kärl",
     settings: "Inställningar",
+    about: "Om appen",
     addItem: "Lägg till kärl",
     wipe: "Rensa alla data",
   },
@@ -121,6 +122,39 @@ export const t = {
     dataTitle: "Data",
     dataHelp:
       "Inget konto, ingen inloggning. Allt sparas på den här telefonen. Med notiser påslagna finns också en kopia på servern, eftersom det är den som skickar påminnelsen när appen är stängd.",
+  },
+  about: {
+    title: "Om appen",
+    lead: "Sopkoll påminner dig när det är dags att ställa ut soptunnorna. Den är gratis och byggd på fritiden, för grannar i Stockholm.",
+    howTitle: "Så funkar den",
+    how: [
+      "Skriv in din adress, så hämtas hämtdagarna för dina kärl från Stockholm Vatten och Avfall.",
+      "Välj när du vill bli påmind, till exempel kvällen innan kl. 19.",
+      "Lägg appen på hemskärmen och slå på notiser. iPhone: Safari → Dela → Lägg till på hemskärmen. Android: Chrome → ⋮ → Lägg till på startskärmen.",
+      "Hämtdagarna uppdateras automatiskt, även när en helgdag flyttar tömningen.",
+    ],
+    howOwnBins:
+      "Bor du i lägenhet eller har kärl som SVOA inte känner till kan du lägga in dem själv.",
+    dataTitle: "Dina uppgifter",
+    dataIntro:
+      "Det finns inget konto och ingen inloggning. Appen frågar aldrig efter namn, mejl eller telefonnummer, och det finns ingen reklam, inga cookies och ingen spårning.",
+    dataLocal:
+      "Använder du appen utan notiser sparas allt bara på din egen telefon. Adressen du söker på skickas via sopkolls server till Stockholm Vatten och Avfall, eftersom deras tjänst inte går att fråga direkt från en app. Svaret sparas på servern i högst ett dygn, så att grannar på samma adress inte belastar SVOA i onödan.",
+    dataPushIntro:
+      "Slår du på notiser sparas en kopia på servern, eftersom det är servern som skickar påminnelsen när appen är stängd:",
+    dataPush: [
+      "din adress och dina kärl med hämtdagar, för att veta när du ska påminnas och kunna uppdatera datumen varje natt",
+      "när du vill bli påmind, och din tidszon",
+      "en anonym ”notisadress” från Apple eller Google, som bara kan användas för att skicka notiser till appen på din telefon",
+    ],
+    dataSecurity:
+      "Notiserna är krypterade på vägen, så Apple och Google kan inte läsa dem. IP-adresser och sökta adresser loggas inte.",
+    wipeTitle: "Ta bort allt",
+    wipe: "Med ”Rensa alla data” i menyn tas allt bort från både telefonen och servern direkt. Servern säkerhetskopieras varje natt, och kopiorna raderas automatiskt efter en vecka.",
+    techTitle: "Server och kod",
+    tech: "Servern står i Stockholm (AWS), och koden är öppen för den som vill titta:",
+    codeUrl: "https://github.com/urban-eriksson/sopkoll",
+    codeLabel: "github.com/urban-eriksson/sopkoll",
   },
   push: {
     enable: "Slå på notiser",

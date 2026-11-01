@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { BrowserRouter, Navigate, Route, Routes } from "react-router";
 import { refreshScheduleIfStale, startSync } from "@/lib/sync";
+import { About } from "@/views/about";
 import { Dashboard } from "@/views/dashboard";
 import { Home } from "@/views/home";
 import { ItemForm } from "@/views/item-form";
@@ -22,6 +23,7 @@ export function App() {
         <Route path="/items/new" element={<ItemForm />} />
         <Route path="/items/:id" element={<ItemForm />} />
         <Route path="/settings" element={<SettingsView />} />
+        <Route path="/about" element={<About />} />
         <Route path="*" element={<Navigate to="/app" replace />} />
       </Routes>
     </BrowserRouter>

@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
   <!-- Solid background: required for maskable icons, and iOS flattens
-       transparency to black otherwise. Dark kraft brown. -->
-  <rect width="512" height="512" fill="#3a2418" />
+       transparency to black otherwise. The app's primary brown, as on its buttons. -->
+  <rect width="512" height="512" fill="#7a4f32" />
   <!-- The bell: the one warm accent, where bike-my-day keeps its sun. -->
   <circle cx="404" cy="108" r="40" fill="#fbbf24" />
   <g stroke="#ffffff" stroke-width="22" stroke-linecap="round" stroke-linejoin="round" fill="none">

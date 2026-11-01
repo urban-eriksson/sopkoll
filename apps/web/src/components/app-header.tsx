@@ -1,4 +1,4 @@
-import { ArrowLeft, Plus, Settings, SlidersHorizontal, Trash2 } from "lucide-react";
+import { ArrowLeft, Info, Plus, Settings, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import {
@@ -81,6 +81,11 @@ export function AppHeader({ back = false }: { back?: boolean }) {
             <DropdownMenuItem asChild>
               <Link to="/settings">
                 <SlidersHorizontal /> {t.nav.settings}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/about">
+                <Info /> {t.nav.about}
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
